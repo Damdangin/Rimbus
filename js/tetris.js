@@ -1,3 +1,5 @@
+import BLOCKS from "./blocks.js"
+
 //DOM
 const playground = document.querySelector(".playground > ul");
 
@@ -11,18 +13,11 @@ let duration = 500; //블럭이 떨어지는 시간
 let downInterval;   //
 let tempMovingItem; //movingItem 잠깐 담아두는 변수
 
-const BLOCKS = {
-    tree: [
-        [[2,1],[0,1],[1,0],[1,1]],
-        [[0,1],[1,0],[1,1],[1,2]],
-        [[1,2],[1,1],[0,1],[2,1]],
-        [[2,1],[1,2],[1,0],[1,1]],
-    ]
-}
+
 
 const movingItem = {
-    type: "tree",
-    direction: 3,       //블럭 회전 지표
+    type: "",
+    direction: 0,       //블럭 회전 지표
     top: 0,             //블럭의 x이동거리
     left: 0,            //블럭의 y이동거리
 };
@@ -34,9 +29,9 @@ function init() {
     tempMovingItem = { ...movingItem};
 
     for (let i = 0; i < GAME_ROWS; i++) {
-        prependNewLine()
+         prependNewLine()
     }
-    renderBlocks()
+    generateNewBlock()
 }
 
 function prependNewLine() {
@@ -90,6 +85,25 @@ function seizeBlock() {
         moving.classList.remove("moving");
         moving.classList.add("seized");
     })
+    generateNewBlock()
+}
+
+function generateNewBlock() {
+
+    clearInterval(downInterval);
+    downInterval = setInterval(() => {
+        moveBlock('top', 1)
+    }, duration)
+
+    const blockArray = Object.entries(BLOCKS);
+    const randomIndex = Math.floor(Math.random() * blockArray.length)
+    
+    movingItem.type = blockArray[randomIndex][0]
+    movingItem.top = 0;
+    movingItem.left = 3;
+    movingItem.direction = 0;
+    tempMovingItem = { ...movingItem }
+    renderBlocks();
 }
 
 function checkEmpty(target) {
